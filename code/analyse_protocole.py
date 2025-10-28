@@ -4,41 +4,40 @@ import os
 import matplotlib
 from scapy.all import rdpcap 
 
-# ----------------- CONFIGURATION DU PROJET RESET -----------------
-# !!! IMPORTANT !!! UTILISER LE CHEMIN ABSOLU VALIDÉ POUR TROUVER LE FICHIER.
-# Le 'r' devant la chaîne indique à Python de lire le chemin littéralement (raw string).
+# ----------------- CONFIGURATION ET DÉPENDANCES -----------------
+# Chemin ABSOLU vers le fichier de capture .cap.
+# L'utilisation de 'r' (raw string) garantit une lecture correcte sous Windows.
 CAPTURE_FILE = r'C:\Users\arezk\Documents\Projet1\data\SkypeIRC.cap' 
 
-# Utilisation du backend 'Agg' pour générer l'image sans ouvrir de fenêtre graphique (nécessaire en CMD/Git Bash)
+# Force Matplotlib à utiliser le backend 'Agg' (non-graphique) pour sauvegarder l'image sans ouvrir de fenêtre.
 matplotlib.use('Agg') 
 
 
 # ----------------- FONCTION 1 : ANALYSE DU TRAFIC RÉEL (SCAPY) -----------------
 def analyser_trafic_reel():
-    """ Lit le fichier .cap avec Scapy et stocke les protocoles. """
+    """ Lit le fichier .cap avec Scapy, extrait les protocoles de haut niveau, et retourne un DataFrame Pandas. """
     
     protocol_list = []
     print(f"Tentative d'analyse du fichier : {CAPTURE_FILE}...")
     
     try:
-        # Scapy lit le fichier .cap en une seule fois (rdpcap = read pcap)
+        # Lecture synchrone du fichier .cap.
         paquets = rdpcap(CAPTURE_FILE)
 
-        # Boucle qui parcourt chaque paquet dans le fichier
+        # Itération sur chaque paquet pour extraire l'information du protocole.
         for paquet in paquets:
-            # Utilise la dernière couche pour identifier le protocole (TCP, UDP, DNS, etc.)
+            # Extraction du nom du protocole de la dernière couche (TCP, UDP, DNS, etc.)
             protocol_name = paquet.lastlayer().name
             protocol_list.append(protocol_name.strip()) 
             
         print(f"Analyse réussie : {len(paquets)} paquets lus.")
         
-        # Créer le tableau de données Pandas (DataFrame) pour l'analyse statistique
+        # Création du DataFrame pour l'analyse statistique.
         df = pd.DataFrame(protocol_list, columns=['Protocole'])
         return df
         
     except FileNotFoundError:
-        print(f"\n!!! ERREUR : Fichier {CAPTURE_FILE} non trouvé. !!!")
-        print("Vérifiez que le chemin absolu dans le script est correct.")
+        print(f"\n!!! ERREUR : Fichier {CAPTURE_FILE} non trouvé. Vérifiez le chemin absolu.")
         return pd.DataFrame()
         
     except Exception as e:
@@ -46,36 +45,34 @@ def analyser_trafic_reel():
         return pd.DataFrame()
 
 
-# ----------------- FONCTION 2 : COMPTAGE ET VISUALISATION (PANDAS/MATPLOTLIB) -----------------
+# ----------------- FONCTION 2 : COMPTAGE ET VISUALISATION -----------------
 def analyser_et_visualiser(df):
-    """ Compte les protocoles (Pandas) et crée le graphique (Matplotlib). """
+    """ Compte les protocoles (Pandas) et génère le graphique (Matplotlib) dans le dossier 'doc/'. """
     
     if df.empty:
         return
         
-    # 1. COMPTAGE (Pandas)
+    # Comptage statistique des protocoles
     comptage = df['Protocole'].value_counts()
     
     print("\n--- Répartition des Protocoles Réels ---")
     print(comptage)
     
-    # 2. VISUALISATION (Matplotlib)
+    # Création du diagramme en secteurs
     plt.figure(figsize=(8, 8))
     comptage.plot(kind='pie', autopct='%1.1f%%', startangle=90, cmap='viridis')
     plt.title(f'Distribution du Trafic Réseau ({df.shape[0]} paquets)')
     plt.ylabel('')
     
-    # 3. Sauvegarder l'image dans le dossier 'doc/' (au même niveau que 'code/')
-    # Ceci est le chemin relatif le plus simple pour la sauvegarde
+    # Sauvegarde de l'image dans le dossier doc/ (au même niveau que code/)
     plt.savefig('../doc/distribution_protocoles_reels.png') 
     print(f"\nGraphique sauvegardé dans : doc/distribution_protocoles_reels.png")
     
 
-# ----------------- EXECUTION DU SCRIPT (Point de départ) -----------------
+# ----------------- EXECUTION DU SCRIPT -----------------
 if __name__ == "__main__":
     
-    # On crée le dossier 'doc/' à la racine du projet ('../doc') s'il n'existe pas.
-    # Ceci est fait ici pour s'assurer que le chemin de sauvegarde existe.
+    # Assure que le dossier de sortie 'doc/' existe
     if not os.path.exists('../doc'):
         os.makedirs('../doc')
         
