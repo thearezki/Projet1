@@ -23,3 +23,11 @@ Le projet a servi de preuve de concept pour la maîtrise des outils d'analyse de
 4.  **Rapport :** Génération automatique de l'image `distribution_protocoles_reels.png` dans le dossier `doc/`.
 
 ## Structure du Projet
+Nous avons 3 dossiers:
+code
+  analyse_protocole.py--> script python qui fais l anaylse et le traitement du fichier SkypeIRC
+data
+  SkypeIRC.cap --> Le fichier de capture réseau à analyser
+doc
+  distribution_protocoles_reels.png ---> Résultat du graphique 
+
