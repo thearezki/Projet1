@@ -4,7 +4,7 @@ import os
 import matplotlib
 from scapy.all import rdpcap 
 
-# ----------------- CONFIGURATION ET DÉPENDANCES -----------------
+#  CONFIGURATION ET DÉPENDANCES -
 # Chemin ABSOLU vers le fichier de capture .cap.
 # L'utilisation de 'r' (raw string) garantit une lecture correcte sous Windows.
 CAPTURE_FILE = r'C:\Users\arezk\Documents\Projet1\data\SkypeIRC.cap' 
@@ -13,7 +13,7 @@ CAPTURE_FILE = r'C:\Users\arezk\Documents\Projet1\data\SkypeIRC.cap'
 matplotlib.use('Agg') 
 
 
-# ----------------- FONCTION 1 : ANALYSE DU TRAFIC RÉEL (SCAPY) -----------------
+# FONCTION 1 : ANALYSE DU TRAFIC RÉEL (SCAPY) 
 def analyser_trafic_reel():
     """ Lit le fichier .cap avec Scapy, extrait les protocoles de haut niveau, et retourne un DataFrame Pandas. """
     
@@ -45,7 +45,7 @@ def analyser_trafic_reel():
         return pd.DataFrame()
 
 
-# ----------------- FONCTION 2 : COMPTAGE ET VISUALISATION -----------------
+#  FONCTION 2 : COMPTAGE ET VISUALISATION 
 def analyser_et_visualiser(df):
     """ Compte les protocoles (Pandas) et génère le graphique (Matplotlib) dans le dossier 'doc/'. """
     
@@ -69,7 +69,7 @@ def analyser_et_visualiser(df):
     print(f"\nGraphique sauvegardé dans : doc/distribution_protocoles_reels.png")
     
 
-# ----------------- EXECUTION DU SCRIPT -----------------
+#  EXECUTION DU SCRIPT 
 if __name__ == "__main__":
     
     # Assure que le dossier de sortie 'doc/' existe
@@ -80,4 +80,5 @@ if __name__ == "__main__":
     if not data_frame.empty:
         analyser_et_visualiser(data_frame)
     else:
+
         print("Analyse des données annulée.")
